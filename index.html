@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Test -2</title>
+    
+</head>
+<body>
+    <h1>User List</h1>
+    <div id="form" >
+        <table >
+         <thead>
+             <th>Id</th>
+            <th>First Name</th>
+            
+            <th>Last Name</th>
+            
+            <th >Email</th>
+            
+            <th >Gender</th>
+            
+            <th >Ip_address</th>
+          </thead>
+            <tbody id="users">
+
+            </tbody>
+        </table>
+    </hr>
+         
+    </div >
+    <h1>User Entry Form</h1>
+    <form onsubmit='addEvent(event)'>
+      First_Name:  <input type="text" id="first_name" placeholder="First_Name"   required><br/><br/>
+      Last_Name : <input type="text" id="last_name" placeholder="Last_Name"  required><br/><br/>
+      Email_Id : <input type="text" id="email" placeholder="Email_Id" required><br/><br/>
+       Gender: <input type="text" id="gender" placeholder="Gender" required><br/><br/>
+       Ip_Address: <input type="text" id="ip_address" placeholder="Ip_Address" required><br/><br/>
+        <input type="submit"  value="Register" >
+    </form>    
+    <script src="script.js">
+    function getUserdata(){
+    fetch('http://localhost:3000/users').then((response)=>{
+        if(response.status===200)
+            return response.json();
+    }).then((users)=>{
+        console.log(users);
+        if(users.length>0){
+            var temp="";
+            users.forEach(element => {
+                temp+="<tr>";
+                temp+="<td>"+element.id+"</td>";
+                temp+="<td>"+element.first_name+"</td>";
+                temp+="<td>"+element.last_name+"</td>";
+                temp+="<td>"+element.email+"</td>";
+                temp+="<td>"+element.gender+"</td>";
+                temp+="<td>"+element.ip_address+"</td>";
+                
+            })
+            document.getElementById("users").innerHTML=temp;
+        }
+            
+        
+              
+       // appendData(users);
+    }).catch((error)=>{
+       // e.preventDefault();
+        console.log(error);
+    })
+}
+    function addEvent(){
+    event.preventDefault();
+    console.log("calling add event")
+    let first_name=document.getElementById('first_name').value;
+    let last_name=document.getElementById('last_name').value;
+    let email=document.getElementById('email').value;
+    let gender=document.getElementById('gender').value;
+    let ip_address=document.getElementById('ip_address').value;
+    //console.log(first_name)
+    let userData={
+        "first_name":first_name,
+        "last_name":last_name,
+        "email":email,
+        "gender":gender,
+        "ip_address":ip_address
+    }
+
+    fetch('http://localhost:3000/users',{
+        "method":'POST',
+        "body":JSON.stringify(userData),
+        "headers":{
+            "Content-Type":"appliction/json"
+        }
+
+    }).then((response)=>{
+        if(response.status===201){
+            console.log("record added")
+            getUserdata();
+        }
+
+    }).catch((error)=>{
+        console.log(error)
+    })
+    getUserdata();
+
+}
+    </script>
+   
+    <style>
+        td,th{
+    border: 1px solid black;
+    padding: 1rem;
+}
+
+    </style>
+</body>
+</html>
